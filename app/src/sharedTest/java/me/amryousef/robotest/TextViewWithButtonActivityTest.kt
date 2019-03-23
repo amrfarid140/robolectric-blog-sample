@@ -43,4 +43,9 @@ class TextViewWithButtonActivityTest : BaseTest() {
                 && it.findViewById<TextView>(android.R.id.message).isVisible
         }
     }
+
+    @Test
+    fun injectableTextHasInjectedData() {
+        onView(withId(R.id.injectable_text)).check(matches(withText("I am a fake message")))
+    }
 }
