@@ -2,7 +2,7 @@ package me.amryousef.robotest
 
 abstract class BaseTest {
 
-    val uiAssertions : UiTestAssertions by lazy {
+    val uiAssertions: UiTestAssertions by lazy {
         Class.forName(
             if (isART()) {
                 "me.amryousef.robotest.InstrumentationTestAssertion"
@@ -13,5 +13,4 @@ abstract class BaseTest {
     }
 
     private fun isART() = System.getProperty("java.runtime.name")?.toLowerCase()?.contains("android") == true
-    
 }
