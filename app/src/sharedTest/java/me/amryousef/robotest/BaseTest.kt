@@ -1,7 +1,23 @@
 package me.amryousef.robotest
 
-abstract class BaseTest {
+import android.app.Activity
+import androidx.test.core.app.ActivityScenario
+import androidx.test.core.app.ApplicationProvider
+import dagger.android.AndroidInjector
 
+abstract class BaseTest<T : Activity>(private val activityClass: Class<T>) {
+
+    private lateinit var activityScenario: ActivityScenario<T>
+
+    fun setupActivity() {
+        ApplicationProvider.getApplicationContext<TestRoboApplication>()
+            .dispatchingAndroidInjector = AndroidInjector { instance ->
+            setupActivityDependencies(instance as T)
+        }
+
+        activityScenario = ActivityScenario.launch(activityClass)
+    }
+    
     val uiAssertions: UiTestAssertions by lazy {
         Class.forName(
             if (isART()) {
@@ -11,6 +27,8 @@ abstract class BaseTest {
             }
         ).newInstance() as UiTestAssertions
     }
+
+    abstract fun setupActivityDependencies(activity: T)
 
     private fun isART() = System.getProperty("java.runtime.name")?.toLowerCase()?.contains("android") == true
 }

@@ -2,7 +2,6 @@ package me.amryousef.robotest
 
 import android.widget.TextView
 import androidx.core.view.isVisible
-import androidx.test.core.app.ActivityScenario
 import androidx.test.espresso.Espresso.onView
 import androidx.test.espresso.action.ViewActions.click
 import androidx.test.espresso.assertion.ViewAssertions.matches
@@ -11,18 +10,27 @@ import androidx.test.espresso.matcher.ViewMatchers.withEffectiveVisibility
 import androidx.test.espresso.matcher.ViewMatchers.withId
 import androidx.test.espresso.matcher.ViewMatchers.withText
 import androidx.test.ext.junit.runners.AndroidJUnit4
+import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.whenever
 import org.junit.Before
 import org.junit.Test
 import org.junit.runner.RunWith
 
 @RunWith(AndroidJUnit4::class)
-class TextViewWithButtonActivityTest : BaseTest() {
+class TextViewWithButtonActivityTest : BaseTest<TextViewWithButtonActivity>(
+    TextViewWithButtonActivity::class.java
+) {
 
-    private lateinit var activityScenario: ActivityScenario<TextViewWithButtonActivity>
+    private val mockDataProvider = mock<FakeDataProivder>()
 
     @Before
     fun setup() {
-        activityScenario = ActivityScenario.launch(TextViewWithButtonActivity::class.java)
+        whenever(mockDataProvider.getFakeData()).thenReturn("I am a mock")
+        setupActivity()
+    }
+
+    override fun setupActivityDependencies(activity: TextViewWithButtonActivity) {
+        activity.fakeDataProvider = mockDataProvider
     }
 
     @Test
@@ -46,6 +54,6 @@ class TextViewWithButtonActivityTest : BaseTest() {
 
     @Test
     fun injectableTextHasInjectedData() {
-        onView(withId(R.id.injectable_text)).check(matches(withText("I am a fake message")))
+        onView(withId(R.id.injectable_text)).check(matches(withText("I am a mock")))
     }
 }
